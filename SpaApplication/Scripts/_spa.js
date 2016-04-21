@@ -60,7 +60,6 @@ app.controller("departmentController", function ($scope, departmentService) {
         $scope.department = { Id: 0, Name: '' };
 
     };
-
 });
 
 app.controller("employeeController", function ($scope, employeeService) {
