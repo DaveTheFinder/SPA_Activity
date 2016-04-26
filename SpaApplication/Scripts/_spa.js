@@ -22,13 +22,10 @@ app.controller("mainController", function ($scope) {
 
 });
 
-app.controller("employeeController", function ($scope, employeeService) {
-
-    $scope.employee = employeeService.query();
-
-});
-
 app.controller("departmentController", function ($scope, departmentService) {
+
+    $scope.title = '';
+    $scope.errors = [];
 
     $scope.departments = departmentService.query();
 
@@ -37,23 +34,56 @@ app.controller("departmentController", function ($scope, departmentService) {
         Name: '',
     };
 
+    $scope.selectDepartment = function (dpmt) {
+        $scope.department = dpmt;
+        $scope.showUpdateDialog();
+    };
+
     $scope.deleteDepartment = function (department) {
-        departmentService.remove(department, $scope.refreshData);
+        departmentService.remove(department, $scope.refreshData, $scope.errorMessage);
     };
 
     $scope.refreshData = function () {
         $scope.departments = departmentService.query();
+        $('#modal-dialog').modal('hide');
+    };
+    
+    $scope.errorMessage = function (response) {
+        var errors = [];
+        for (var key in response.data.ModelState) {
+            for (var i = 0; i < response.data.ModelState[key].length; i++) {
+                errors.push(response.data.ModelState[key][i]);
+            }
+        }
+        $scope.errors = errors;
     };
 
-    $scope.showAddDialog = function () {
+    $scope.clearErrors = function () {
+        $scope.errors = [];
+    };
+
+    $scope.showUpdateDialog = function () {
+        $scope.clearErrors();
+        $scope.title = 'Update Department';
         $('#modal-dialog').modal('show');
     };
 
-    $scope.saveDepartment = function() {
-        departmentService.save($scope.department, $scope.refreshData);
-        $('#modal-dialog').modal('hide');
-        
+    $scope.showAddDialog = function () {
+        $scope.clearErrors();
         $scope.clearCurrentDepartment();
+        $scope.title = 'Add Department';
+        $('#modal-dialog').modal('show');
+    };
+
+    $scope.saveDepartment = function () {
+        if ($scope.department.Id > 0) {
+            departmentService.update($scope.department, $scope.refreshData, $scope.errorMessage);
+        }
+        else {
+            departmentService.save($scope.department, $scope.refreshData, $scope.errorMessage);
+            //$('#modal-dialog').modal('hide');
+        }
+        
     };
 
     $scope.clearCurrentDepartment = function () {
@@ -97,7 +127,6 @@ app.controller("employeeController", function ($scope, employeeService) {
     };
 
 });
-
 
     app.config(function ($routeProvider) {
         $routeProvider.when('/', {

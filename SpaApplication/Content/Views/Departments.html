@@ -10,7 +10,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Add Department</h4>
+                    <h4 class="modal-title">{{title}}</h4>
                 </div>
                 <div class="modal-body">
                     <div class="container">
@@ -53,10 +53,10 @@
                 </tr>
             </thead>
             <tbody ng-repeat="dpmt in departments">
-                <tr>
+                <tr ng-click="selectDepartment(dpmt)">
                     <td> <span>{{dpmt.Id}}</span></td>
                     <td> <span>{{dpmt.Name}}</span></td>
-                    <td> <button class="btn btn-danger" ng-click="deleteDepartment(dpmt)"> Delete </button></td>
+                    <td> <button class="btn btn-danger" ng-click="deleteDepartment(dpmt); $event.stopPropagation()"> Delete </button></td>
                 </tr>
             </tbody>
         </table>
